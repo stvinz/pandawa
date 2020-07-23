@@ -2,6 +2,8 @@
 
 @section('title', 'Home')
 
+@section('active-page', 'Home')
+
 @section('content')
-    <p>hello</p>
+    <p>This is home</p>
 @endsection
