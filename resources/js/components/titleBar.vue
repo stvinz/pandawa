@@ -5,7 +5,7 @@
                 <img src="assets/logo-backless.png" alt="Logo" class="img-responsive" height="60" width="60">
             </div>
             <div class="col-auto p-0">
-                <h5 class="text-nowrap my-1" style="color: white;">PT. Sumber Jaya Pandawa</h5>
+                <h5 class="text-nowrap my-1">PT. Sumber Jaya Pandawa</h5>
             </div>
         </div>
     </div>

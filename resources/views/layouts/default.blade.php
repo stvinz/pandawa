@@ -9,7 +9,7 @@
         <div id="app">
             @include('components.header')
 
-            <div class="container">
+            <div class="container py-5">
                 @yield('content')
             </div>
             

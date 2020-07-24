@@ -1,8 +1,10 @@
 <template>
     <nav class="navbar navbar-expand-sm navbar-dark justify-content-center p-1 pb-3">
         <ul class="navbar-nav">
-            <li class="nav-item px-5" v-for="(item, index) in navlink" :key="item.name" :class="{ active: isActive[index] }" :style="navBorder[index]">
-                <a class="nav-link" :href="item.link">{{ item.name }}</a>
+            <li class="nav-item px-5" v-for="(item, index) in navlink" :key="item.name" :class="{ active: isActive[item.name], dropdown: isDropdown(item.name) }" :style="navBorder(index)">
+                <a class="nav-link" :href="item.link" :class="{'dropdown-toggle': isDropdown(item.name)}">{{ item.name }}</a>
+                <div v-html="dropdownMenu(item.name)" class="test">
+                </div>
             </li>
         </ul>
     </nav>
@@ -31,47 +33,44 @@
                         link: '/contact-us'
                     }
                 ],
-                isActive: null,
-                navBorder: null
+                isActive: {
+                    Home: false,
+                    About: false,
+                    Product: false,
+                    'Contact Us': false
+                }
             }
         },
+        methods: {
+            navBorder: function(index) {
+                var borderStyle = '1px solid white';
+
+                if (index < this.navlink.length-1) {
+                    return {'border-left': borderStyle};
+                }
+                else if (index == this.navlink.length-1) {
+                    return {
+                        'border-left': borderStyle,
+                        'border-right': borderStyle
+                    };
+                }
+            },
+            isDropdown: function(name) {
+                return name == "Product" ? true : false;
+            },
+            isToggleDropdown: function(name) {
+                return name == "Product" ? "dropdown" : null;
+            },
+            dropdownMenu: function (name) {
+                return name == "Product" ? 
+                '<ul class="dropdown-menu" style="margin-top: -0.1em; min-width: 100%"> \
+                    <li><a class="dropdown-item" href="#">Bolts and Screws</a></li> \
+                </ul>'
+                : null;
+            },
+        },
         created() {
-            var isActive = [];
-
-            for (var i = 0; i < this.navlink.length; i++) {
-                isActive[i] = false;
-            }
-
-            this.isActive = isActive;
-
-            var navBorder = [];
-            var borderStyle = '1px solid white';
-
-            for (var i = 0; i < this.navlink.length-1; i++) {
-                navBorder[i] = {'border-left': borderStyle};
-            }
-
-            navBorder[this.navlink.length-1] = {
-                'border-left': borderStyle,
-                'border-right': borderStyle
-            };
-
-            this.navBorder = navBorder
-
-            switch (this.activate) {
-                case "Home":
-                    Vue.set(this.isActive, 0, true);
-                    break;
-                case "About":
-                    Vue.set(this.isActive, 1, true);
-                    break;
-                case "Product":
-                    Vue.set(this.isActive, 2, true);
-                    break;
-                case "Contact":
-                    Vue.set(this.isActive, 3, true);
-                    break;
-            }
+            this.isActive[this.activate] = true;
         }
     }
 </script>
