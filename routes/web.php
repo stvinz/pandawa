@@ -12,14 +12,16 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+// Dynamic routes
 Route::get('product', 'ProductController@getProduct');
 
+Route::get('contact-us', 'ContactController@show');
+Route::post('contact-us', 'ContactController@submit');
+
+// Static routes
 Route::get('about', function() {
     return view('pages.about');
-});
-
-Route::get('contact-us', function() {
-    return view('pages.contact');
 });
 
 Route::get('home', function() {

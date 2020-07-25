@@ -1,6 +1,6 @@
 @extends('layouts.default')
 
-@section('title', 'Home')
+@section('title', 'PT. Sumber Jaya Pandawa')
 
 @section('active-page', 'Home')
 

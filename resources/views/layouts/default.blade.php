@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
-        @include('components.head')
+        @include('components.default.head')
 
-        <title>PT. Sumber Jaya Pandawa - @yield('title')</title>
+        <title>@yield('title')</title>
     </head>
     <body>
         <div id="app">
-            @include('components.header')
+            @include('components.default.header')
 
-            <div class="container py-5">
+            <div class="container py-5" style="min-height: 85vh;">
                 @yield('content')
             </div>
             
-            @include('components.footer')
+            @include('components.default.footer')
         </div>
         <script src="{{ asset('js/app.js') }}"></script>
     </body>
