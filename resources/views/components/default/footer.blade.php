@@ -1,7 +1,7 @@
 <footer class="bg-dark">
     <div class="container-fluid py-5 px-5">
         <div class="row justify-content-center">
-            <div class="col-sm-3">
+            <div class="col-sm-3 col-12 py-3">
                 <p>Company</p>
                 <ul class="list-unstyled">
                     <li><a href="/about">About</a></li>
@@ -10,13 +10,13 @@
                     <li><a href="#">Terms of Service</a></li>
                 </ul>
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-3 col-12 py-3">
                 <p>Social</p>
                 <ul class="list-unstyled">
                     <li><a href="#">Facebook</a></li>
                 </ul>
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-3 col-12 py-3">
                 <p>Support & Resources</p>
                 <ul class="list-unstyled">
                     <li><a href="/contact-us">Contact Us</a></li>

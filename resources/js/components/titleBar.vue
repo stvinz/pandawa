@@ -1,11 +1,11 @@
 <template>
     <div class="container-fluid w-100" style="cursor: pointer;" v-on:click="handle($event)">
         <div class="row row-no-gutters align-items-center justify-content-center">
-            <div class="col-auto">
-                <img src="assets/logo-backless.png" alt="Logo" class="img-responsive" height="60" width="60">
+            <div class="col-sm-auto col-2 pr-1">
+                <img src="assets/logo-backless.png" alt="Logo" class="img-responsive" height="50" width="50">
             </div>
-            <div class="col-auto p-0">
-                <h5 class="text-nowrap my-1">PT. Sumber Jaya Pandawa</h5>
+            <div class="col-sm-auto col-10 pl-1">
+                <h5 class="text my-1">PT. Sumber Jaya Pandawa</h5>
             </div>
         </div>
     </div>
