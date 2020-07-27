@@ -34,7 +34,7 @@
             border: 0px !important;
         }
 
-        header input[name="s"], button[type="submit"] {
+        header .title-search, button[type="submit"] {
             display: none;
         }
 
