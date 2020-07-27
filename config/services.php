@@ -30,4 +30,9 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'grecaptcha' => [
+        'site' => env('GRECAPTCHA_SITE_KEY'),
+        'secret' => env('GRECAPTCHA_SECRET_KEY')
+    ],
+
 ];

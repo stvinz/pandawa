@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\View;
+
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -13,6 +16,8 @@ class ContactController extends Controller {
     }
 
     public function submit(Request $request) {
+        $key = config('services.grecaptcha');
+
         $this->validate($request, [
             'company' => 'nullable|string|max:25|min:3',
             'name' => 'required|alpha|max:25|min:3',
@@ -21,6 +26,17 @@ class ContactController extends Controller {
             'attachment' => 'max:10240'
         ]);
 
-        print_r($request->all());
+        $res = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+            'secret' => $key['secret'],
+            'response' => $request->input('g-recaptcha-response'),
+        ]);
+        
+        if (!$res["success"]) {
+            return View::make('pages.contact')->withErrcap("Please try again");
+        }
+
+        //print_r($request->all());
+
+        print_r($res->json());
     }
 }

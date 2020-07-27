@@ -22,10 +22,6 @@
     }
 
     @media only screen and (max-width: 576px) {
-        header .title-bar {
-            display: none;
-        }
-
         header nav .title-nav {
             display: block !important;
         }
@@ -34,7 +30,7 @@
             border: 0px !important;
         }
 
-        header .title-search, button[type="submit"] {
+        header .title-bar, header .title-search, button[type="submit"] {
             display: none;
         }
 

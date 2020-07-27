@@ -1,3 +1,8 @@
+@php
+    $grecaptcha = config('services.grecaptcha');
+    $key = $grecaptcha["site"];
+@endphp
+
 @extends('layouts.default')
 
 @section('title', 'Contact Us')
@@ -66,6 +71,23 @@
         @error('attachment')
         @include('components.contact.error')
         @enderror
+        <div class="w-100 py-3"></div>
+
+
+        <div class="col-lg-2">
+        </div>
+        <div class="col-lg-6">
+            <div class="g-recaptcha" data-sitekey="{{ $key }}"></div>
+        </div>
+        <div class="w-100 py-0"></div>
+
+        @if (isset($errcap))
+        <div class="col-lg-2"></div>
+        <div class="col-lg-6">
+            <small class="text-danger">{{ $errcap }}</small>  
+        </div>
+        @endif
+
         <div class="w-100 py-3"></div>
         
         <div class="col-lg-8">
