@@ -21,7 +21,6 @@ window.Vue = require('vue');
 
 Vue.component('nav-bar', require('./components/navBar.vue').default);
 Vue.component('title-bar', require('./components/titleBar.vue').default);
-Vue.component('styler', require('./components/styler.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

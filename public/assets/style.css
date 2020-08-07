@@ -1,0 +1,45 @@
+.navbar-nav li:hover .dropdown-menu {
+    display: block;
+}
+
+header, footer {
+    color: white;
+}
+
+footer ul a {
+    color: #F5F5F5;
+}
+
+footer ul a:hover {
+    color: #fedc59;
+}
+
+footer ul li {
+    margin: 2% 0%;
+}
+
+.upsize {
+    font-size: 1.1em;
+}
+
+@media only screen and (max-width: 576px) {
+    header nav .title-nav {
+        display: block !important;
+    }
+
+    header ul li {
+        border: 0px !important;
+    }
+
+    header .title-bar, header .title-search, button[type="submit"] {
+        display: none;
+    }
+
+    .navbar-nav li:hover .dropdown-menu {
+        display: none;
+    }
+
+    .navbar-nav li .dropdown-toggle::after {
+        display: none !important;
+    }
+}

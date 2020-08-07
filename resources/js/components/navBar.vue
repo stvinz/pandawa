@@ -8,8 +8,9 @@
             <ul class="navbar-nav">
                 <li class="nav-item px-5" v-for="(item, index) in navlink" :key="item.name" :class="{ active: isActive[item.name], dropdown: isDropdown(item.name) }" :style="navBorder(index)">
                     <a class="nav-link" :href="item.link" :class="{'dropdown-toggle': isDropdown(item.name)}">{{ item.name }}</a>
-                    <div v-html="dropdownMenu(item.name)">
-                    </div>
+                    <ul :style="dropdownMenu(item.name)" class="dropdown-menu overflow-auto" >
+                        <li v-for="item in catList" :key="item.name"><a class="dropdown-item" :href="genUrlCat(item.name)">{{ item.name }}</a></li>
+                    </ul>
                 </li>
             </ul>
         </div>
@@ -18,7 +19,7 @@
 
 <script>
     export default {
-        props: ['activate'],
+        props: ['activate', 'categories'],
         data() {
             return {
                 navlink: [
@@ -44,7 +45,8 @@
                     About: false,
                     Product: false,
                     'Contact Us': false
-                }
+                },
+                catList: JSON.parse(this.categories)
             }
         },
         methods: {
@@ -68,11 +70,10 @@
                 return name == "Product" ? "dropdown" : null;
             },
             dropdownMenu: function (name) {
-                return name == "Product" ? 
-                '<ul class="dropdown-menu" style="margin-top: -0.1em; min-width: 100%"> \
-                    <li><a class="dropdown-item" href="#">Bolts and Screws</a></li> \
-                </ul>'
-                : null;
+                return name == "Product" ? {'margin-top': '-0.01em', 'min-width': '100%', 'max-height': '500%'} : {'display': 'none'};
+            },
+            genUrlCat: function (name) {
+                return 'product/category/' + name;
             },
         },
         created() {

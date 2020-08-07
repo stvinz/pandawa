@@ -1,7 +1,7 @@
 <header class="sticky-top">
     <div class="container-fluid bg-dark p-2" >
         {{ Form::open(['url' => '/product', 'method' => 'GET']) }}
-        <div class="row row-no-gutters align-items-center title-bar">
+        <div class="row row-no-gutters align-items-center title-bar m-0">
             <div class="col-xl-3 col-lg-5 col-12 p-0">
                 <title-bar></title-bar>
             </div>
@@ -16,7 +16,7 @@
         {{ Form::close() }}
 
         {{ Form::open(['url' => '/product', 'method' => 'GET']) }}
-        <nav-bar activate="@yield('active-page')"></nav-bar>
+        <nav-bar activate="@yield('active-page')" categories="{{ $categories }}"></nav-bar>
         <div class="collapse" id="collapsibleSearch">
             {{ Form::text('s', null, ['placeholder' => 'Search', 'class' => 'form-control input-lg w-100 coll-search'])}}
         </div>
