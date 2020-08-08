@@ -1,5 +1,5 @@
 <template>
-    <nav class="navbar navbar-expand-sm navbar-dark p-2">
+    <nav class="navbar navbar-expand-lg navbar-dark p-2">
         <button type="button" class="navbar-toggler align-self-start" data-toggle="collapse" data-target="#collapsibleNavbar"><i class="fa fa-bars"></i></button>
         <h5 class="text my-1 align-self-center title-nav" style="display: none;">Sumber Jaya Pandawa</h5>
         <button type="button" class="navbar-toggler align-self-end" data-toggle="collapse" data-target="#collapsibleSearch"><i class="fa fa-search"></i></button>
@@ -9,7 +9,7 @@
                 <li class="nav-item px-5" v-for="(item, index) in navlink" :key="item.name" :class="{ active: isActive[item.name], dropdown: isDropdown(item.name) }" :style="navBorder(index)">
                     <a class="nav-link" :href="item.link" :class="{'dropdown-toggle': isDropdown(item.name)}">{{ item.name }}</a>
                     <ul :style="dropdownMenu(item.name)" class="dropdown-menu overflow-auto" >
-                        <li v-for="item in catList" :key="item.name"><a class="dropdown-item" :href="genUrlCat(item.name)">{{ item.name }}</a></li>
+                        <li v-for="dropItem in dropItems[item.name]" :key="dropItem.name"><a class="dropdown-item" :href="genUrl(item.name, dropItem.name)">{{ dropItem.name }}</a></li>
                     </ul>
                 </li>
             </ul>
@@ -19,7 +19,7 @@
 
 <script>
     export default {
-        props: ['activate', 'categories'],
+        props: ['activate', 'categories', 'materials'],
         data() {
             return {
                 navlink: [
@@ -32,8 +32,12 @@
                         link: '/about'
                     },
                     {
+                        name: 'Material',
+                        link: '/product/material'
+                    },
+                    {
                         name: 'Product',
-                        link: '/product'
+                        link: '/product/category'
                     },
                     {
                         name: 'Contact Us',
@@ -43,10 +47,14 @@
                 isActive: {
                     Home: false,
                     About: false,
+                    Material: false,
                     Product: false,
                     'Contact Us': false
                 },
-                catList: JSON.parse(this.categories)
+                dropItems: {
+                    Product: JSON.parse(this.categories),
+                    Material: JSON.parse(this.materials),
+                }
             }
         },
         methods: {
@@ -64,16 +72,19 @@
                 }
             },
             isDropdown: function(name) {
-                return name == "Product" ? true : false;
+                return ((name == "Product") || (name == "Material"));
             },
             isToggleDropdown: function(name) {
-                return name == "Product" ? "dropdown" : null;
+                return ((name == "Product") || (name == "Material")) ? "dropdown" : null;
             },
             dropdownMenu: function (name) {
-                return name == "Product" ? {'margin-top': '-0.01em', 'min-width': '100%', 'max-height': '500%'} : {'display': 'none'};
+                return ((name == "Product") || (name == "Material")) ? {'margin-top': '-0.01em', 'min-width': '100%', 'max-height': '500%'} : {'display': 'none'};
             },
-            genUrlCat: function (name) {
-                return 'product/category/' + name;
+            genUrl: function (menu_name, name) {
+                if (menu_name == "Product")
+                    return 'product/category/' + name;
+                else if (menu_name == "Material")
+                    return 'product/material/' + name;
             },
         },
         created() {

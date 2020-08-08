@@ -27,7 +27,9 @@ class AppServiceProvider extends ServiceProvider
     {
         // Header Menu Categories
         $categories = DB::table('categories')->select('name')->orderBy('name', "asc")->get();
+        $materials = DB::table('materials')->select('name')->orderBy('name', "asc")->get();
 
         View::share('categories', json_encode($categories));
+        View::share('materials', json_encode($materials));
     }
 }

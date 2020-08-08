@@ -29,5 +29,5 @@ Route::get('home', function() {
 });
 
 Route::any('{any?}', function () {
-    return redirect('/home');
+    return abort(404);
 })->where('any', '.*');
