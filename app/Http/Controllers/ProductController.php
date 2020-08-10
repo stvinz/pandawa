@@ -13,16 +13,15 @@ class ProductController extends Controller {
     {
         $action = null;
 
-        if ($request->query("s", "") == "") {
+        if (count($request->query()) == 0) {
             // Show all
-            $action = View::make('pages.product')->withProducts("all");
+            $action = View::make('pages.catalogue')->withProducts("all");
         }
         else {
             // Show some
-            $action = View::make('pages.product')->withProducts("some");
+            $action = View::make('pages.catalogue')->withProducts("some");
         }
 
         return $action;
     }
-
 }

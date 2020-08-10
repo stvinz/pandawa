@@ -1,7 +1,20 @@
+<style scoped>
+    .title {
+        color: white;
+    }
+
+    .title:hover {
+        color: lightgray;
+    }
+
+    .navbar-nav li:hover .dropdown-menu {
+        display: block;
+    }
+</style>
 <template>
     <nav class="navbar navbar-expand-lg navbar-dark p-2">
         <button type="button" class="navbar-toggler align-self-start" data-toggle="collapse" data-target="#collapsibleNavbar"><i class="fa fa-bars"></i></button>
-        <h5 class="text my-1 align-self-center title-nav" style="display: none;">Sumber Jaya Pandawa</h5>
+        <h5 class="text my-1 align-self-center title-nav" style="display: none;"><a class="text-decoration-none title" href="/home">Sumber Jaya Pandawa</a></h5>
         <button type="button" class="navbar-toggler align-self-end" data-toggle="collapse" data-target="#collapsibleSearch"><i class="fa fa-search"></i></button>
 
         <div class="collapse navbar-collapse justify-content-center" id="collapsibleNavbar">    
@@ -33,11 +46,11 @@
                     },
                     {
                         name: 'Material',
-                        link: '/product/material'
+                        link: '/material-list'
                     },
                     {
                         name: 'Product',
-                        link: '/product/category'
+                        link: '/product-list'
                     },
                     {
                         name: 'Contact Us',
@@ -82,9 +95,9 @@
             },
             genUrl: function (menu_name, name) {
                 if (menu_name == "Product")
-                    return 'product/category/' + name;
+                    return 'product?c=' + name;
                 else if (menu_name == "Material")
-                    return 'product/material/' + name;
+                    return 'product?m=' + name;
             },
         },
         created() {

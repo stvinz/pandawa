@@ -17,6 +17,7 @@ class CreateProductsTable extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->longText('desc');
+            $table->string('img');
             $table->foreignId('categories_id')->constrained();
         });
     }

@@ -13,38 +13,38 @@ class MaterialsSeeder extends Seeder
     {
         //
         $materials = [
-            "Besi",
-            "Stainless A2 / 304",
-            "Stainless A4 / 316",
-            "Baja",
-            "HDG",
-            "Zinc Plate",
-            "Alloy",
-            "Stainless B8",
-            "Stainless B8M",
-            "Plain",
-            "Nickel",
-            "YZ",
-            "Stainless A4 L / 316L",
-            "Nylon",
-            "Brass",
-            "Zinc Flake",
-            "Zinc Mech",
-            "Steel",
-            "Black",
-            "Karet",
-            "Stainless 420",
-            "Stainless 305",
-            "Copper Zinc",
-            "Alumi / SS 304",
-            "Aluminium",
-            "40CR",
-            "Lime Pointue",
-            "Plastik"
+            "Besi" => "hollow-anchor.jpg",
+            "Stainless A2 / 304" => "dowel-pin-pull-out.jpg",
+            "Stainless A4 / 316" => "baut-cb-rib-neck.jpg",
+            "Baja" => "self-push-nut.jpg",
+            "HDG" => "baut-cb-round-neck-square-head.jpg",
+            "Zinc Plate" => "baut-l-socket-cap-screw.jpg",
+            "Alloy" => "socket-set-screw.jpg",
+            "Stainless B8" => "heavy-hex-nut.jpg",
+            "Stainless B8M" => "heavy-hex-nut.jpg",
+            "Plain" => "eye-nut.jpg",
+            "Nickel" => "d-nipple.jpg",
+            "YZ" => "jp-set.jpg",
+            "Stainless A4 L / 316L" => "hex-nut.jpg",
+            "Nylon" => "viser.jpg",
+            "Brass" => "wood-screw-flat.jpg",
+            "Zinc Flake" => "nord-lock.jpg",
+            "Zinc Mech" => "contact-washer-pointed.jpg",
+            "Steel" => "paku-beton.jpg",
+            "Black" => "tapping-bo-thread-jt-plus.jpg",
+            "Karet" => "karet-roofing.jpg",
+            "Stainless 420" => "snap-ring-h.jpg",
+            "Stainless 305" => "sds-jf.jpg",
+            "Copper Zinc" => "cd-stud.jpg",
+            "Alumi / SS 304" => "blind-rivet.jpg",
+            "Aluminium" => "tumbular-round-head.jpg",
+            "40CR" => "magnetic-nut-setter.jpg",
+            "Lime Pointue" => "nicholson-taper-file.jpg",
+            "Plastik" => "knobstar.jpg"
         ];
 
-        foreach ($materials as $material) {
-            DB::table('materials')->insert(['name' => $material]);
+        foreach ($materials as $name => $img) {
+            DB::table('materials')->insert(['name' => $name, 'img' => $img]);
         }
     }
 }

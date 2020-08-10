@@ -13,7 +13,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Dev routes
+/*if (!app()->environment('production')) {
+    Route::get('dev/cats', function() {
+        return view('dev.inputCats');
+    });
+}*/
+
 // Dynamic routes
+//Route::get('product/details', 'ProductController@get');
 Route::get('product', 'ProductController@getProduct');
 
 Route::get('contact-us', 'ContactController@show');
@@ -26,6 +34,14 @@ Route::get('about', function() {
 
 Route::get('home', function() {
     return view('pages.welcome');
+});
+
+Route::get('material-list', function() {
+    return view('pages.materialList');
+});
+
+Route::get('product-list', function() {
+    return view('pages.productList');
 });
 
 Route::any('{any?}', function () {
