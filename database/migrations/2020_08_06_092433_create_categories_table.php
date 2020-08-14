@@ -18,6 +18,8 @@ class CreateCategoriesTable extends Migration
             $table->string('name')->unique();
             $table->string('img')->unique();
         });
+
+        DB::statement('ALTER TABLE categories ADD FULLTEXT fulltext_index (name)');
     }
 
     /**

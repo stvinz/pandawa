@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <head>
+        @include('components.default.head')
+
+        <title>Dev</title>
+    </head>
+    <body>
+        <div id="app">
+            <div class="container py-5" style="min-height: 85vh;">
+                @yield('content')
+            </div>
+        </div>
+        <script src="{{ asset('js/app.js') }}"></script>
+    </body>
+</html>

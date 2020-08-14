@@ -1,3 +1,4 @@
+/* Global Custom CSS */
 header, footer {
     color: white;
 }
@@ -18,24 +19,9 @@ p {
     font-size: 1.1em;
 }
 
+/* For Smaller Screen */
 @media only screen and (max-width: 992px) {
-    header nav .title-nav {
-        display: block !important;
-    }
-
-    header ul li {
-        border: 0px !important;
-    }
-
     header .title-bar, header .title-search, button[type="submit"] {
-        display: none;
-    }
-
-    .navbar-nav li:hover .dropdown-menu {
-        display: none;
-    }
-
-    .navbar-nav li .dropdown-toggle::after {
         display: none !important;
     }
 }

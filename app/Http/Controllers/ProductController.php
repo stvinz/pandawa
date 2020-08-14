@@ -6,22 +6,78 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller {
     
     public function getProduct(Request $request)
     {
-        $action = null;
+        $query_list = $request->query();
 
-        if (count($request->query()) == 0) {
-            // Show all
-            $action = View::make('pages.catalogue')->withProducts("all");
+        $res = DB::table('prod_mat')
+            ->join('products', 'prod_mat.products_id', '=', 'products.id')
+            ->join('materials', 'prod_mat.materials_id', '=', 'materials.id')
+            ->join('categories', 'products.categories_id', '=', 'categories.id')
+            ->select('prod_mat.id as id', 'prod_mat.extra as extra', 'products.img as img', 'products.name as name', 'products.desc as desc', 'materials.name as material', 'categories.name as category');
+        
+        if (array_key_exists('s', $query_list)) {
+            $s = $request->query('s');
+            
+            if ($s != '') {
+                // NEED TO LOOK AT PRODUCT INSTEAD OF MATERIALS ETC
+                $res = $res
+                    ->addSelect(DB::raw("MATCH(products.name) AGAINST('".$s."') AS relevance"))
+                    ->whereRaw(
+                        'MATCH(products.name) AGAINST(? IN BOOLEAN MODE) OR
+                        MATCH(materials.name) AGAINST(? IN BOOLEAN MODE) OR
+                        MATCH(categories.name) AGAINST(? IN BOOLEAN MODE)', [$s, $s, $s]
+                    )
+                    ->orderBy('relevance', 'desc');
+            }
         }
         else {
-            // Show some
-            $action = View::make('pages.catalogue')->withProducts("some");
+            if (array_key_exists('m', $query_list)) {
+                $prods = [];
+                $sel = DB::table('materials')
+                    ->where('materials.name', '=', $request->query('m'))
+                    ->join('prod_mat', 'prod_mat.materials_id', '=', 'materials.id')
+                    ->select('prod_mat.products_id as id')
+                    ->get();
+                
+                foreach ($sel as $row) {
+                    array_push($prods, $row->id);
+                }
+
+                $res = $res->whereIn('products.id', $prods);
+            }
+
+            if (array_key_exists('c', $query_list)) {
+                $res = $res->where('categories.name', '=', $request->query('c'));
+            }
         }
 
-        return $action;
+        $res = $res->get();
+        $arranged = [];
+
+        foreach ($res as $row) {
+            // Somehow need to encrypt id and decrypt id
+            if (!array_key_exists($row->name, $arranged)) {
+                $arranged[$row->name] = [
+                    'id' => $row->id,
+                    'desc' => $row->desc, 
+                    'img' => $row->img, 
+                    'category' => $row->category, 
+                    'materials' => [[
+                        'name' => $row->material, 
+                        'extra' => $row->extra
+                        ]]
+                ];
+            }
+            else {
+                array_push($arranged[$row->name]['materials'], ['name' => $row->material, 'extra' => $row->extra]);
+            }
+        }
+
+        return View::make('pages.catalogue')->withProducts(json_encode($arranged))->withSearchQ('You Searched For ...');
     }
 }

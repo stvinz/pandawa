@@ -7,6 +7,7 @@
         color: lightgray;
     }
 </style>
+
 <template>
     <div class="container-fluid w-100 title" v-on:click="handle($event)">
         <div class="row row-no-gutters align-items-center justify-content-center">

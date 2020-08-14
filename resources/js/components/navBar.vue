@@ -10,7 +10,26 @@
     .navbar-nav li:hover .dropdown-menu {
         display: block;
     }
+
+    @media only screen and (max-width: 992px) {
+        .title-nav {
+            display: block !important;
+        }
+
+        ul li {
+            border: 0px !important;
+        }
+
+        .navbar-nav li:hover .dropdown-menu {
+            display: none !important;
+        }
+
+        .navbar-nav li .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
 </style>
+
 <template>
     <nav class="navbar navbar-expand-lg navbar-dark p-2">
         <button type="button" class="navbar-toggler align-self-start" data-toggle="collapse" data-target="#collapsibleNavbar"><i class="fa fa-bars"></i></button>

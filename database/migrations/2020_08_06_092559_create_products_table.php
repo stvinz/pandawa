@@ -16,10 +16,12 @@ class CreateProductsTable extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->longText('desc');
+            $table->longText('desc')->nullable();
             $table->string('img');
             $table->foreignId('categories_id')->constrained();
         });
+
+        DB::statement('ALTER TABLE products ADD FULLTEXT fulltext_index (name)');
     }
 
     /**

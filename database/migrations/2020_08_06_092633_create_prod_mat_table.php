@@ -19,6 +19,8 @@ class CreateProdMatTable extends Migration
             $table->foreignId('materials_id')->constrained();
             $table->string('extra')->nullable();
         });
+
+        DB::statement('ALTER TABLE prod_mat ADD FULLTEXT fulltext_index (extra)');
     }
 
     /**

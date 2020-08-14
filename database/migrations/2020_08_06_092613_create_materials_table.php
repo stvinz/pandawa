@@ -18,6 +18,8 @@ class CreateMaterialsTable extends Migration
             $table->string('name')->unique();
             $table->string('img');
         });
+
+        DB::statement('ALTER TABLE materials ADD FULLTEXT fulltext_index (name)');
     }
 
     /**

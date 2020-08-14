@@ -13,27 +13,37 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Dev routes
-/*if (!app()->environment('production')) {
-    Route::get('dev/cats', function() {
-        return view('dev.inputCats');
-    });
-}*/
+/*------------------------
+    Dvelepoment features
+--------------------------*/
+if (!app()->environment('production')) {
+    Route::get('dev/cats', 'DevController@getCats');
+    Route::get('dev/mats', 'DevController@getMats');
+    Route::get('dev/prods', 'DevController@getProds');
+    
+    Route::post('dev/prods', 'DevController@postProds');
+}
 
-// Dynamic routes
+/*------------------ 
+    Dynamic routes
+--------------------*/
+// Parameter routes
 //Route::get('product/details', 'ProductController@get');
+
+// Query routes
+// Route::get('product/{name}', 'ProductController@getSingleProduct');
 Route::get('product', 'ProductController@getProduct');
 
+/*----------------- 
+    Static routes
+-------------------*/
+// Routes that requires custom data transfer
 Route::get('contact-us', 'ContactController@show');
 Route::post('contact-us', 'ContactController@submit');
 
-// Static routes
+// Routes that only need global data
 Route::get('about', function() {
     return view('pages.about');
-});
-
-Route::get('home', function() {
-    return view('pages.welcome');
 });
 
 Route::get('material-list', function() {
@@ -44,6 +54,13 @@ Route::get('product-list', function() {
     return view('pages.productList');
 });
 
+// Default page
+Route::get('home', function() {
+    return view('pages.welcome');
+});
+
+// For unknown routes, redirect to home
 Route::any('{any?}', function () {
+    // return redirect('home');
     return abort(404);
 })->where('any', '.*');
