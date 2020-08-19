@@ -17,7 +17,7 @@
 
         {{ Form::open(['url' => '/product', 'method' => 'GET']) }}
         <nav-bar activate="@yield('active-page')" categories="{{ $categories }}" materials="{{ $materials }}"></nav-bar>
-        <div class="collapse" id="collapsibleSearch">
+        <div class="coll" id="collapsibleSearch">
             {{ Form::text('s', null, ['placeholder' => 'Search for a product, category, or material', 'class' => 'form-control input-lg w-100 coll-search'])}}
         </div>
         {{ Form::close() }}

@@ -3,6 +3,10 @@
         color: white;
     }
 
+    .title-nav {
+        display: none;
+    }
+
     .title:hover {
         color: lightgray;
     }
@@ -32,11 +36,11 @@
 
 <template>
     <nav class="navbar navbar-expand-lg navbar-dark p-2">
-        <button type="button" class="navbar-toggler align-self-start" data-toggle="collapse" data-target="#collapsibleNavbar"><i class="fa fa-bars"></i></button>
-        <h5 class="text my-1 align-self-center title-nav" style="display: none;"><a class="text-decoration-none title" href="/home">Sumber Jaya Pandawa</a></h5>
-        <button type="button" class="navbar-toggler align-self-end" data-toggle="collapse" data-target="#collapsibleSearch"><i class="fa fa-search"></i></button>
+        <button type="button" class="navbar-toggler align-self-start" id="navbarToggle"><i class="fa fa-bars"></i></button>
+        <h5 class="text my-1 align-self-center title-nav"><a class="text-decoration-none title" href="/home">Sumber Jaya Pandawa</a></h5>
+        <button type="button" class="navbar-toggler align-self-end" id="searchToggle"><i class="fa fa-search"></i></button>
 
-        <div class="collapse navbar-collapse justify-content-center" id="collapsibleNavbar">    
+        <div class="navbar-collapse justify-content-center coll" id="collapsibleNavbar">    
             <ul class="navbar-nav">
                 <li class="nav-item px-5" v-for="(item, index) in navlink" :key="item.name" :class="{ active: isActive[item.name], dropdown: isDropdown(item.name) }" :style="navBorder(index)">
                     <a class="nav-link" :href="item.link" :class="{'dropdown-toggle': isDropdown(item.name)}">{{ item.name }}</a>

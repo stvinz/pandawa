@@ -10,14 +10,27 @@
     .card:hover {
         background-color: lemonchiffon;
     }
+
+    .card img {
+        height: 250px;
+        width: 250px;
+    }
+
+    div .container {
+        cursor: pointer;
+    }
+
+    .card-top {
+        border-bottom: 1px solid lightgray;
+    }
 </style>
 
 <template>
     <div class="row align-items-center justify-content-center">
-        <div class="container col-auto card mb-2" style="cursor: pointer;" v-for="item in items" :key="item.name">
+        <div class="container col-auto card mb-2" v-for="item in items" :key="item.name">
             <a :href="genUrl(item.name)" class="text-decoration-none">
-                <div class="row justify-content-center align-items-center p-0" style="border-bottom: 1px solid lightgray">
-                    <img :src="genImg(item.img)" :alt="item.img" class="img-responsive" height="250" width="250">
+                <div class="row justify-content-center align-items-center p-0 card-top">
+                    <img :src="genImg(item.img)" :alt="item.img" class="img-responsive">
                 </div>
                 <div class="row justify-content-center align-items-center pt-3 pb-0">
                     <p class="text-center">{{ item.name }}</p>

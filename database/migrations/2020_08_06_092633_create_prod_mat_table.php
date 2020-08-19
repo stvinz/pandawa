@@ -16,11 +16,12 @@ class CreateProdMatTable extends Migration
         Schema::create('prod_mat', function (Blueprint $table) {
             $table->id();
             $table->foreignId('products_id')->constrained();
-            $table->foreignId('materials_id')->constrained();
+            $table->foreignId('materials_id')->nullable()->constrained();
             $table->string('extra')->nullable();
+            $table->string('brand')->nullable();
         });
 
-        DB::statement('ALTER TABLE prod_mat ADD FULLTEXT fulltext_index (extra)');
+        DB::statement('ALTER TABLE prod_mat ADD FULLTEXT fulltext_index (extra, brand)');
     }
 
     /**

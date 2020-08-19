@@ -16,5 +16,6 @@
             @include('components.default.footer')
         </div>
         <script src="{{ asset('js/app.js') }}"></script>
+        <script src="{{ asset ('js/components/header.js') }}"></script>
     </body>
 </html>

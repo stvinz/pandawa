@@ -10,22 +10,53 @@
     .card:hover {
         background-color: lemonchiffon;
     }
+
+    .card img {
+        height: 250px;
+        width: 250px;
+    }
+    
+    .card:hover img {
+        opacity: 0.3;
+        transition: opacity 0.3s;
+    }
+
+    div > .overlay {
+        position: absolute;
+        visibility: hidden;
+        height: 250px;
+        width: 250px;
+        transform: translate(0px, 0px);
+    }
+
+    .card:hover .overlay{
+        visibility: visible;
+    }
+
+    div .container {
+        cursor: pointer;
+    }
+
+    .card-top {
+        border-bottom: 1px solid lightgray;
+    }
 </style>
 
 <template>
     <div class="row align-items-center justify-content-center">
-        <div class="container col-auto card mb-2" style="cursor: pointer;" v-for="(dets, name) in items" :key="name">
+        <div class="container col-auto card mb-2" v-for="(dets, name) in items" :key="name">
             <a :href="genUrl(dets.id)" class="text-decoration-none">
-                <div class="row justify-content-center align-items-center p-0" style="border-bottom: 1px solid lightgray">
-                    <img :src="genImg(dets.img)" :alt="dets.img" class="img-responsive" height="250" width="250">
+                <div class="row justify-content-center align-items-center p-0 card-top">
+                    <img :src="genImg(dets.img)" :alt="dets.img" class="img-responsive">
+                    <div class="overlay p-3 m-0">
+                        <p class="text-center m-0 p-3">Available Materials: </p>
+                        <p class="text-center m-0 p-1" v-for="detail in dets.materials" :key="detail.name">
+                            {{ detail.name }} {{ parantExtra(detail.extra) }} 
+                        </p>
+                    </div>
                 </div>
                 <div class="row justify-content-center align-items-center pt-3 pb-0">
                     <p class="text-center">{{ name }}</p>
-                </div>
-                <div class="row justify-content-center align-items-center pt-3 pb-0" v-for="detail in dets.materials" :key="detail.name">
-                    <p class="text-center">
-                        {{ detail.name }} {{ detail.extra }} 
-                    </p>
                 </div>
             </a>
         </div>
@@ -46,10 +77,12 @@
             },
             genImg: function(name) {
                 return "/storage/images/products/" + name;
+            },
+            parantExtra: function(extra) {
+                return extra != "" ? '('+ extra +')' : null;
             }
         },
         created() {
-            console.log(this.items);
         }
     }
 </script>

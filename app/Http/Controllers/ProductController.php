@@ -24,31 +24,68 @@ class ProductController extends Controller {
             $s = $request->query('s');
             
             if ($s != '') {
-                // NEED TO LOOK AT PRODUCT INSTEAD OF MATERIALS ETC
-                $res = $res
-                    ->addSelect(DB::raw("MATCH(products.name) AGAINST('".$s."') AS relevance"))
-                    ->whereRaw(
-                        'MATCH(products.name) AGAINST(? IN BOOLEAN MODE) OR
-                        MATCH(materials.name) AGAINST(? IN BOOLEAN MODE) OR
-                        MATCH(categories.name) AGAINST(? IN BOOLEAN MODE)', [$s, $s, $s]
-                    )
-                    ->orderBy('relevance', 'desc');
-            }
-        }
-        else {
-            if (array_key_exists('m', $query_list)) {
+                /*
                 $prods = [];
                 $sel = DB::table('materials')
-                    ->where('materials.name', '=', $request->query('m'))
+                    ->whereRaw('MATCH(materials.name) AGAINST(? IN BOOLEAN MODE)', [$s])
                     ->join('prod_mat', 'prod_mat.materials_id', '=', 'materials.id')
                     ->select('prod_mat.products_id as id')
                     ->get();
-                
+
                 foreach ($sel as $row) {
                     array_push($prods, $row->id);
                 }
 
-                $res = $res->whereIn('products.id', $prods);
+                $sel = DB::table('prod_mat')
+                    ->whereRaw('MATCH(extra) AGAINST(? IN BOOLEAN MODE)', [$s])
+                    ->select('products_id as id')
+                    ->get();
+                
+                foreach ($sel as $row) {
+                    if (!in_array($row->id, $prods)) {
+                        array_push($prods, $row->id);
+                    }
+                }
+
+                $res = $res
+                    ->addSelect(DB::raw("MATCH(products.name) AGAINST('".$s."') + MATCH(categories.name) AGAINST('".$s."') + MATCH(materials.name) AGAINST('".$s."') + MATCH(prod_mat.extra) AGAINST('".$s."') AS relevance"))
+                    ->whereRaw(
+                        'MATCH(products.name) AGAINST(? IN BOOLEAN MODE) OR
+                        MATCH(categories.name) AGAINST(? IN BOOLEAN MODE)', [$s, $s]
+                    )
+                    ->orWhereIn('products.id', $prods)
+                    ->orderBy('relevance', 'desc');
+                */
+                
+                $res = $res
+                ->addSelect(DB::raw("MATCH(products.name) AGAINST('".$s."') + MATCH(categories.name) AGAINST('".$s."') + MATCH(materials.name) AGAINST('".$s."') + MATCH(prod_mat.extra) AGAINST('".$s."') AS relevance"))
+                ->whereIn('products.id', function($sel) use($s) {
+                    $sel->select('prod_mat.products_id as id')
+                        ->from('materials')
+                        ->whereRaw('MATCH(materials.name) AGAINST(? IN BOOLEAN MODE)', [$s])
+                        ->join('prod_mat', 'prod_mat.materials_id', '=', 'materials.id');
+                })
+                ->orWhereIn('products.id', function($sel) use($s) {
+                    $sel->select('prod_mat.products_id as id')
+                        ->from('prod_mat')
+                        ->whereRaw('MATCH(extra) AGAINST(? IN BOOLEAN MODE)', [$s]);
+                })
+                ->orWhereRaw(
+                    'MATCH(products.name) AGAINST(? IN BOOLEAN MODE) OR
+                    MATCH(categories.name) AGAINST(? IN BOOLEAN MODE)', [$s, $s]
+                )
+                ->orderBy('relevance', 'desc');
+                
+            }
+        }
+        else {
+            if (array_key_exists('m', $query_list)) {
+                $res = $res->whereIn('products.id', function($sel) use($request) {
+                    $sel->select('prod_mat.products_id as id')
+                        ->from('materials')
+                        ->where('materials.name', '=', $request->query('m'))
+                        ->join('prod_mat', 'prod_mat.materials_id', '=', 'materials.id');
+                });
             }
 
             if (array_key_exists('c', $query_list)) {
@@ -60,7 +97,7 @@ class ProductController extends Controller {
         $arranged = [];
 
         foreach ($res as $row) {
-            // Somehow need to encrypt id and decrypt id
+            // Somehow need to encrypt id and decrypt id OR just echo name
             if (!array_key_exists($row->name, $arranged)) {
                 $arranged[$row->name] = [
                     'id' => $row->id,
@@ -70,7 +107,7 @@ class ProductController extends Controller {
                     'materials' => [[
                         'name' => $row->material, 
                         'extra' => $row->extra
-                        ]]
+                    ]]
                 ];
             }
             else {

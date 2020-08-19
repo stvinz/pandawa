@@ -19,9 +19,17 @@ p {
     font-size: 1.1em;
 }
 
+.coll {
+    display: none;
+}
+
 /* For Smaller Screen */
 @media only screen and (max-width: 992px) {
     header .title-bar, header .title-search, button[type="submit"] {
         display: none !important;
+    }
+
+    .coll-show {
+        display: block;
     }
 }
