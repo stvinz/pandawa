@@ -13,18 +13,21 @@ class ProductController extends Controller {
     public function getProduct(Request $request)
     {
         $query_list = $request->query();
-
         $res = DB::table('prod_mat')
             ->join('products', 'prod_mat.products_id', '=', 'products.id')
             ->join('materials', 'prod_mat.materials_id', '=', 'materials.id')
             ->join('categories', 'products.categories_id', '=', 'categories.id')
             ->select('prod_mat.id as id', 'prod_mat.extra as extra', 'products.img as img', 'products.name as name', 'products.desc as desc', 'materials.name as material', 'categories.name as category');
-        
+        $is_p = true;
+
         if (array_key_exists('s', $query_list)) {
             $s = $request->query('s');
             
             if ($s != '') {
+                // NEED TO CHECK PERFORMANCE
                 /*
+                // Multi-queries
+
                 $prods = [];
                 $sel = DB::table('materials')
                     ->whereRaw('MATCH(materials.name) AGAINST(? IN BOOLEAN MODE)', [$s])
@@ -56,26 +59,41 @@ class ProductController extends Controller {
                     ->orWhereIn('products.id', $prods)
                     ->orderBy('relevance', 'desc');
                 */
-                
-                $res = $res
-                ->addSelect(DB::raw("MATCH(products.name) AGAINST('".$s."') + MATCH(categories.name) AGAINST('".$s."') + MATCH(materials.name) AGAINST('".$s."') + MATCH(prod_mat.extra) AGAINST('".$s."') AS relevance"))
+                /*
+                // Material Single-query
+                // Seems buggy (value sometimes changes for the same query)
                 ->whereIn('products.id', function($sel) use($s) {
-                    $sel->select('prod_mat.products_id as id')
-                        ->from('materials')
+                    $sel->from('materials')
                         ->whereRaw('MATCH(materials.name) AGAINST(? IN BOOLEAN MODE)', [$s])
-                        ->join('prod_mat', 'prod_mat.materials_id', '=', 'materials.id');
+                        ->join('prod_mat', 'prod_mat.materials_id', '=', 'materials.id')
+                        ->select('prod_mat.products_id as id');
                 })
-                ->orWhereIn('products.id', function($sel) use($s) {
-                    $sel->select('prod_mat.products_id as id')
-                        ->from('prod_mat')
-                        ->whereRaw('MATCH(extra) AGAINST(? IN BOOLEAN MODE)', [$s]);
-                })
-                ->orWhereRaw(
-                    'MATCH(products.name) AGAINST(? IN BOOLEAN MODE) OR
-                    MATCH(categories.name) AGAINST(? IN BOOLEAN MODE)', [$s, $s]
-                )
-                ->orderBy('relevance', 'desc');
-                
+                */
+
+                $prods = [];
+                $sel = DB::table('materials')
+                    ->whereRaw('MATCH(materials.name) AGAINST(? IN BOOLEAN MODE)', [$s])
+                    ->join('prod_mat', 'prod_mat.materials_id', '=', 'materials.id')
+                    ->select('prod_mat.products_id as id')
+                    ->get();
+
+                foreach ($sel as $row) {
+                    array_push($prods, $row->id);
+                }
+
+                $res = $res
+                    ->whereIn('products.id', $prods)
+                    ->orWhereIn('products.id', function($sel) use($s) {
+                        $sel->select('prod_mat.products_id as id')
+                            ->from('prod_mat')
+                            ->whereRaw('MATCH(extra) AGAINST(? IN BOOLEAN MODE)', [$s]);
+                    })
+                    ->orWhereRaw(
+                        'MATCH(products.name) AGAINST(? IN BOOLEAN MODE) OR
+                        MATCH(categories.name) AGAINST(? IN BOOLEAN MODE)', [$s, $s]
+                    )
+                    ->addSelect(DB::raw("MATCH(products.name) AGAINST('".$s."') + MATCH(categories.name) AGAINST('".$s."') + MATCH(materials.name) AGAINST('".$s."') + MATCH(prod_mat.extra) AGAINST('".$s."') AS relevance"))
+                    ->orderBy('relevance', 'desc');
             }
         }
         else {
@@ -86,10 +104,14 @@ class ProductController extends Controller {
                         ->where('materials.name', '=', $request->query('m'))
                         ->join('prod_mat', 'prod_mat.materials_id', '=', 'materials.id');
                 });
+
+                $is_p = false;
             }
 
             if (array_key_exists('c', $query_list)) {
                 $res = $res->where('categories.name', '=', $request->query('c'));
+            
+                $is_p = false;
             }
         }
 
@@ -115,6 +137,32 @@ class ProductController extends Controller {
             }
         }
 
-        return View::make('pages.catalogue')->withProducts(json_encode($arranged))->withSearchQ('You Searched For ...');
+        // Pagination
+        $lim = 20;
+
+        if ($is_p) {
+            if (array_key_exists('p', $query_list)) {
+                try {
+                    $p = (int) $request->query('p');
+                }
+                catch (Exception $e) {
+                    $p = 1;
+                }
+            }
+            else {
+                $p = 1;
+            }
+
+            if (($p <= 0) || (($lim + $lim * ($p - 1)) > count($arranged))) {
+                $p = 1;
+            }
+
+            $arranged = array_slice($arranged, $lim * ($p - 1) , $lim);
+        }
+
+        return View::make('pages.catalogue')->withProducts(json_encode($arranged))
+            ->withSearchQ('You Searched For ...')
+            ->withPage('1')
+            ->withCount('20');
     }
 }

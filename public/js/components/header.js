@@ -4,7 +4,7 @@ $(document).ready(function() {
     
     $(this).on('scroll', function() {
         var $h = $('header');
-        var hh = $h.height() + 10; // Inaccuracy compensation...
+        var hh = $h.height() + 1; // Inaccuracy compensation
         var sd = $(this).scrollTop();
         var hp = $h.css("top");
 
@@ -17,7 +17,7 @@ $(document).ready(function() {
             if ((hp + s) < init) {
                 $h.css({top: (hp + s) + 'px'});
             }
-            else if ((hp + s) > init) {
+            else if ((hp + s) >= init) {
                 $h.css({top: init + 'px'});
             }
         }
@@ -25,7 +25,7 @@ $(document).ready(function() {
             if ((hp - s) > -hh) {
                 $h.css({top: (hp - s) + 'px'});
             }
-            else if ((hp - s) < -hh) {
+            else if ((hp - s) <= -hh) {
                 $h.css({top: -hh  + 'px'});
             }
         }
@@ -41,7 +41,7 @@ $(document).ready(function() {
         }
         else {
             $nav.addClass("coll-show");
-            $('header').css({top: init + 'px'});
+            window.setTimeout(function () {$('header').css({top: init + 'px'});}, 50);
         }
     });
 
@@ -53,7 +53,7 @@ $(document).ready(function() {
         }
         else {
             $nav.addClass("coll-show");
-            $('header').css({top: init + 'px'});
+            window.setTimeout(function () {$('header').css({top: init + 'px'});}, 50);
         }
     });
 });
