@@ -33,10 +33,6 @@
         visibility: visible;
     }
 
-    div .container {
-        cursor: pointer;
-    }
-
     .card-top {
         border-bottom: 1px solid lightgray;
     }
@@ -44,7 +40,7 @@
 
 <template>
     <div class="row align-items-center justify-content-center">
-        <div class="container col-auto card mb-2" v-for="(dets, name) in items" :key="name">
+        <div class="container col-auto card mb-2 pointer" v-for="(dets, name) in items" :key="name">
             <a :href="genUrl(dets.id)" class="text-decoration-none">
                 <div class="row justify-content-center align-items-center p-0 card-top">
                     <img :src="genImg(dets.img)" :alt="dets.img" class="img-responsive">
@@ -60,12 +56,24 @@
                 </div>
             </a>
         </div>
+        <div class="container col-12 pt-5">
+            <div class="row">
+                <div class="col-2" v-if="this.page != 1">
+                    <a href="/previous">&#8592; Previous</a>
+                </div>
+                <div class="col">
+                </div>
+                <div class="col-2 d-flex flex-row-reverse" v-if="this.page != this.totalpage">
+                    <a href="/next">Next &#8594;</a>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
     export default {
-        props: ['itemslist'],
+        props: ['itemslist', 'page', 'itemspage', 'totalpage'],
         data() {
             return {
                 items: JSON.parse(this.itemslist)

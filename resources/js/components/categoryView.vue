@@ -16,10 +16,6 @@
         width: 250px;
     }
 
-    div .container {
-        cursor: pointer;
-    }
-
     .card-top {
         border-bottom: 1px solid lightgray;
     }
@@ -27,7 +23,7 @@
 
 <template>
     <div class="row align-items-center justify-content-center">
-        <div class="container col-auto card mb-2" v-for="item in items" :key="item.name">
+        <div class="container col-auto card mb-2 pointer" v-for="item in items" :key="item.name">
             <a :href="genUrl(item.name)" class="text-decoration-none">
                 <div class="row justify-content-center align-items-center p-0 card-top">
                     <img :src="genImg(item.img)" :alt="item.img" class="img-responsive">

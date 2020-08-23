@@ -6,5 +6,6 @@
 
 @section('content')
     <p>{{ $searchQ }}</p>
-    <catalogue-view itemslist="{{ $products }}"></catalogue-view>
+    <small>There are {{ $totalItems }} hits</small>
+    <catalogue-view itemslist="{{ $products }}" totalpage="{{ $totalPage }}" page="{{ $page }}" itemspage="{{ $itemsPage }}" ></catalogue-view>
 @endsection

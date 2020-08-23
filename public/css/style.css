@@ -23,6 +23,10 @@ p {
     display: none;
 }
 
+.pointer {
+    cursor: pointer;
+}
+
 /* For Smaller Screen */
 @media only screen and (max-width: 992px) {
     header .title-bar, header .title-search, button[type="submit"] {

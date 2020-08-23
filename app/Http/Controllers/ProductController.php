@@ -13,12 +13,12 @@ class ProductController extends Controller {
     public function getProduct(Request $request)
     {
         $query_list = $request->query();
+        $searchQ = 'Showing all products';
         $res = DB::table('prod_mat')
             ->join('products', 'prod_mat.products_id', '=', 'products.id')
             ->join('materials', 'prod_mat.materials_id', '=', 'materials.id')
             ->join('categories', 'products.categories_id', '=', 'categories.id')
             ->select('prod_mat.id as id', 'prod_mat.extra as extra', 'products.img as img', 'products.name as name', 'products.desc as desc', 'materials.name as material', 'categories.name as category');
-        $is_p = true;
 
         if (array_key_exists('s', $query_list)) {
             $s = $request->query('s');
@@ -92,8 +92,26 @@ class ProductController extends Controller {
                         'MATCH(products.name) AGAINST(? IN BOOLEAN MODE) OR
                         MATCH(categories.name) AGAINST(? IN BOOLEAN MODE)', [$s, $s]
                     )
-                    ->addSelect(DB::raw("MATCH(products.name) AGAINST('".$s."') + MATCH(categories.name) AGAINST('".$s."') + MATCH(materials.name) AGAINST('".$s."') + MATCH(prod_mat.extra) AGAINST('".$s."') AS relevance"))
-                    ->orderBy('relevance', 'desc');
+                    ->addSelect(DB::raw("MATCH(products.name) AGAINST('".$s."') + MATCH(categories.name) AGAINST('".$s."') + MATCH(materials.name) AGAINST('".$s."') + MATCH(prod_mat.extra) AGAINST('".$s."') AS relevance"));
+
+                if (array_key_exists('o', $query_list)) {
+                    switch ($request->query('o')) {
+                        case "nasc":
+                            $res = $res->orderBy('products.name', 'asc');
+                            break;
+                        case "ndesc":
+                            $res = $res->orderBy('products.name', 'desc');
+                            break;
+                        default:
+                            $res = $res->orderBy('relevance', 'desc');
+                            break;
+                    }
+                }
+                else {
+                    $res = $res->orderBy('relevance', 'desc');
+                }
+                
+                $searchQ = 'You searched for '.$s;
             }
         }
         else {
@@ -105,17 +123,23 @@ class ProductController extends Controller {
                         ->join('prod_mat', 'prod_mat.materials_id', '=', 'materials.id');
                 });
 
-                $is_p = false;
+                $searchQ = 'Showing "'.$request->query('m').'" products';
             }
 
             if (array_key_exists('c', $query_list)) {
                 $res = $res->where('categories.name', '=', $request->query('c'));
             
-                $is_p = false;
+                if (array_key_exists('m', $query_list)) {
+                    $searchQ = $searchQ.' and "'.$request->query('c').'" products';
+                }
+                else {
+                    $searchQ = 'Showing "'.$request->query('c').'" products';
+                }
             }
         }
 
         $res = $res->get();
+        $total_items = 0;
         $arranged = [];
 
         foreach ($res as $row) {
@@ -131,6 +155,8 @@ class ProductController extends Controller {
                         'extra' => $row->extra
                     ]]
                 ];
+                
+                $total_items++;
             }
             else {
                 array_push($arranged[$row->name]['materials'], ['name' => $row->material, 'extra' => $row->extra]);
@@ -140,29 +166,35 @@ class ProductController extends Controller {
         // Pagination
         $lim = 20;
 
-        if ($is_p) {
-            if (array_key_exists('p', $query_list)) {
-                try {
-                    $p = (int) $request->query('p');
-                }
-                catch (Exception $e) {
-                    $p = 1;
-                }
+        if (array_key_exists('p', $query_list)) {
+            try {
+                $p = (int) $request->query('p');
             }
-            else {
+            catch (Exception $e) {
                 $p = 1;
             }
-
-            if (($p <= 0) || (($lim + $lim * ($p - 1)) > count($arranged))) {
-                $p = 1;
-            }
-
-            $arranged = array_slice($arranged, $lim * ($p - 1) , $lim);
+        }
+        else {
+            $p = 1;
         }
 
+        $total_page = intdiv($total_items, $lim);
+
+        if ($total_items % $lim > 0) {
+            $total_page++;
+        }
+
+        if (($p <= 0) || ($p > $total_page)) {
+            $p = 1;
+        }
+
+        $arranged = array_slice($arranged, $lim * ($p - 1), $lim);
+
         return View::make('pages.catalogue')->withProducts(json_encode($arranged))
-            ->withSearchQ('You Searched For ...')
-            ->withPage('1')
-            ->withCount('20');
+            ->withSearchQ($searchQ)
+            ->withPage($p)
+            ->withTotalPage($total_page)
+            ->withItemsPage($lim)
+            ->withTotalItems($total_items);
     }
 }
