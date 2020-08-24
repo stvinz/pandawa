@@ -94,22 +94,8 @@ class ProductController extends Controller {
                     )
                     ->addSelect(DB::raw("MATCH(products.name) AGAINST('".$s."') + MATCH(categories.name) AGAINST('".$s."') + MATCH(materials.name) AGAINST('".$s."') + MATCH(prod_mat.extra) AGAINST('".$s."') AS relevance"));
 
-                if (array_key_exists('o', $query_list)) {
-                    switch ($request->query('o')) {
-                        case "nasc":
-                            $res = $res->orderBy('products.name', 'asc');
-                            break;
-                        case "ndesc":
-                            $res = $res->orderBy('products.name', 'desc');
-                            break;
-                        default:
-                            $res = $res->orderBy('relevance', 'desc');
-                            break;
-                    }
-                }
-                else {
-                    $res = $res->orderBy('relevance', 'desc');
-                }
+                
+                $res = $res->orderBy('relevance', 'desc');
                 
                 $searchQ = 'You searched for '.$s;
             }
@@ -135,6 +121,22 @@ class ProductController extends Controller {
                 else {
                     $searchQ = 'Showing "'.$request->query('c').'" products';
                 }
+            }
+        }
+
+        // Sort options
+        $sort_mod = "def";
+
+        if (array_key_exists('o', $query_list)) {
+            switch ($request->query('o')) {
+                case "nasc":
+                    $sort_mod = "nasc";
+                    $res = $res->reorder('products.name', 'asc');
+                    break;
+                case "ndesc":
+                    $sort_mod = "ndesc";
+                    $res = $res->reorder('products.name', 'desc');
+                    break;
             }
         }
 
@@ -195,6 +197,7 @@ class ProductController extends Controller {
             ->withPage($p)
             ->withTotalPage($total_page)
             ->withItemsPage($lim)
-            ->withTotalItems($total_items);
+            ->withTotalItems($total_items)
+            ->withSortMod($sort_mod);
     }
 }

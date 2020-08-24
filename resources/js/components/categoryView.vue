@@ -54,8 +54,6 @@
             genImg: function(name) {
                 return "/storage/images/products/" + name;
             }
-        },
-        created() {
         }
     }
 </script>

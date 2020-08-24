@@ -45,10 +45,27 @@
         pointer-events: none;
         font-weight: bold !important;
     }
+    
+    .query {
+        font-weight: bold;
+    }
 </style>
 
 <template>
     <div class="row align-items-center justify-content-center">
+        <div class="container col-12">
+            <div class="row pb-5">
+                <div class="col d-flex flex-column">
+                    <p class="query mb-0">{{ this.searchq }}</p>
+                    <small>There are {{ this.totalitems }} hit(s)</small>
+                </div>
+                <div class="col-2 d-flex flex-row-reverse">
+                    <select @change="sortOps($event)">
+                        <option v-for="op in this.ops" :key="op.val" :value="op.val" :selected="op.selected">{{ op.txt }}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
         <div class="container col-auto card mb-2 pointer" v-for="(dets, name) in items" :key="name">
             <a :href="genUrl(dets.id)" class="text-decoration-none">
                 <div class="row justify-content-center align-items-center p-0 card-top">
@@ -83,10 +100,27 @@
 
 <script>
     export default {
-        props: ['itemslist', 'page', 'itemspage', 'totalpage'],
+        props: ['itemslist', 'page', 'itemspage', 'totalpage', 'searchq', 'totalitems', 'sortmod'],
         data() {
             return {
-                items: JSON.parse(this.itemslist)
+                items: JSON.parse(this.itemslist),
+                ops: [
+                    {
+                        val: "def",
+                        txt: "Most relevant",
+                        selected: this.sortmod == "def" ? true : false
+                    },
+                    {
+                        val: "nasc",
+                        txt: "Alphabetical order: A to Z",
+                        selected: this.sortmod == "nasc" ? true : false
+                    },
+                    {
+                        val: "ndesc",
+                        txt: "Alphabetical order: Z to A",
+                        selected: this.sortmod == "ndesc" ? true : false
+                    }
+                ]
             }
         },
         methods: {
@@ -175,9 +209,17 @@
                 if (disabled) {
                     e.preventDefault();
                 }
+            },
+            sortOps: function(e) {
+                var val = e.target.value;
+                var url = new URL(location.href);
+                var search_params = url.searchParams;
+
+                search_params.set('o', val);
+
+                url.search = search_params.toString();
+                location.href = url;
             }
-        },
-        created() {
         }
     }
 </script>

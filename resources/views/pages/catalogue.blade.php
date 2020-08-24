@@ -5,7 +5,5 @@
 @section('active-page', 'Product')
 
 @section('content')
-    <p>{{ $searchQ }}</p>
-    <small>There are {{ $totalItems }} hits</small>
-    <catalogue-view itemslist="{{ $products }}" totalpage="{{ $totalPage }}" page="{{ $page }}" itemspage="{{ $itemsPage }}" ></catalogue-view>
+    <catalogue-view itemslist="{{ $products }}" totalpage="{{ $totalPage }}" page="{{ $page }}" itemspage="{{ $itemsPage }}" searchq="{{ $searchQ }}" totalitems="{{ $totalItems }}" sortmod="{{ $sortMod }}" ></catalogue-view>
 @endsection
