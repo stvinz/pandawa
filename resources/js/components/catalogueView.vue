@@ -36,6 +36,15 @@
     .card-top {
         border-bottom: 1px solid lightgray;
     }
+
+    .pagebar a {
+        color: black;
+    }
+
+    .noclick {
+        pointer-events: none;
+        font-weight: bold !important;
+    }
 </style>
 
 <template>
@@ -56,15 +65,16 @@
                 </div>
             </a>
         </div>
-        <div class="container col-12 pt-5">
+        <div class="container col-12 pt-5 pagebar">
             <div class="row">
-                <div class="col-2" v-if="this.page != 1">
-                    <a href="/previous">&#8592; Previous</a>
+                <div class="col-2">
+                    <a :href="navPage(-1)" v-if="this.page != 1">&#8592; Previous</a>
                 </div>
-                <div class="col">
+                <div class="col d-flex justify-content-center">
+                    <a v-for="page in genPage()" :key="page.num" :href="navPage(page.num)" class="px-1" :class="{noclick: page.disabled}" v-on:click="isDisabled(page.disabled, $event)">{{ page.num }}</a>
                 </div>
-                <div class="col-2 d-flex flex-row-reverse" v-if="this.page != this.totalpage">
-                    <a href="/next">Next &#8594;</a>
+                <div class="col-2 d-flex flex-row-reverse">
+                    <a :href="navPage(0)" v-if="(this.page != this.totalpage) && (this.totalpage != 0)">Next &#8594;</a>
                 </div>
             </div>
         </div>
@@ -88,6 +98,83 @@
             },
             parantExtra: function(extra) {
                 return extra != "" ? '('+ extra +')' : null;
+            },
+            navPage: function(page) {
+                var url = new URL(location.href);
+                var search_params = url.searchParams;
+                var current_p;
+                var to_page;
+
+                if (search_params.get('p')) {
+                    current_p = parseInt(search_params.get('p'));
+                }
+                else {
+                    current_p = 1;
+                }
+                
+                switch(page) {
+                    // Prev
+                    case -1:
+                        to_page = current_p - 1;
+                        break;
+                    // Next
+                    case 0:
+                        to_page = current_p + 1;
+                        break;
+                    default:
+                        to_page = page;
+                        break;
+                }
+
+                search_params.set('p', to_page);
+                url.search = search_params.toString();
+
+                return url.toString();
+            },
+            genPage: function() {
+                var numList = [];
+                var len = 9;
+                var first = 1;
+                var lim = first + len;
+
+                while (this.page >= lim) {
+                    first += 5;
+                    lim += 5;
+                }
+
+                if (this.totalpage < lim) {
+                    var dif = lim-first;
+                    lim = this.totalpage;
+
+                    if (dif != len) {
+                        while((first != 1) || (dif != len)) {
+                            first -= 1;
+                            index += 1;
+                        }
+                    }
+                }
+
+                var obj;
+
+                for (var i = first; i <= lim; i++) {
+                    obj = {
+                        num: i,
+                        disabled: i == this.page ? true : false
+                    };
+
+                    numList.push(obj);
+                }
+
+                if (numList.length == 1) {
+                    numList = [];
+                }
+
+                return numList;
+            },
+            isDisabled: function(disabled, e) {
+                if (disabled) {
+                    e.preventDefault();
+                }
             }
         },
         created() {
