@@ -71,9 +71,10 @@
                 <div class="row justify-content-center align-items-center p-0 card-top">
                     <img :src="genImg(dets.img)" :alt="dets.img" class="img-responsive">
                     <div class="overlay p-3 m-0">
-                        <p class="text-center m-0 p-3">Available Materials: </p>
+                        <p class="text-center m-0 p-3" v-if="isMaterial(dets.materials)">Available Materials: </p>
+                        <p class="text-center m-0 p-3" v-if="!isMaterial(dets.materials)">Available Brands: </p>
                         <p class="text-center m-0 p-1" v-for="detail in dets.materials" :key="detail.name">
-                            {{ detail.name }} {{ parantExtra(detail.extra) }} 
+                            {{ detail.name !== null ? detail.name : detail.brand }} {{ parantExtra(detail.extra) }} 
                         </p>
                     </div>
                 </div>
@@ -125,7 +126,7 @@
         },
         methods: {
             genUrl: function(id) {
-                return 'product/' + id;
+                return 'product/' + encodeURIComponent(id);
             },
             genImg: function(name) {
                 return "/storage/images/products/" + name;
@@ -219,7 +220,17 @@
 
                 url.search = search_params.toString();
                 location.href = url;
-            }
+            },
+            isMaterial: function(details) {
+                var res = true;
+                var keys = Object.keys(details);
+
+                if (details[keys[0]].name === null){
+                        res = false;
+                }
+
+                return res;
+            },
         }
     }
 </script>

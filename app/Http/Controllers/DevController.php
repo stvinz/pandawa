@@ -27,9 +27,10 @@ class DevController extends Controller
     {
         $prods = DB::table('prod_mat')
             ->join('products', 'prod_mat.products_id', '=', 'products.id')
-            ->join('materials', 'prod_mat.materials_id', '=', 'materials.id')
+            ->leftJoin('materials', 'prod_mat.materials_id', '=', 'materials.id')
+            ->leftJoin('brands', 'prod_mat.brands_id', '=', 'brands.id')
             ->join('categories', 'products.categories_id', '=', 'categories.id')
-            ->select('prod_mat.id as id', 'prod_mat.extra as extra', 'products.img as img', 'products.name as name', 'products.desc as desc', 'materials.name as material', 'categories.name as category')
+            ->select('prod_mat.id as id', 'prod_mat.extra as extra', 'products.img as img', 'products.name as name', 'products.desc as desc', 'materials.name as material', 'categories.name as category', 'brands.name as brand')
             ->get();
 
         return View::make('dev.inputProds')->withItems($prods)->withErr($err);
@@ -76,43 +77,75 @@ class DevController extends Controller
         $this->validate($request, [
             'name' => 'required|string',
             'category' => 'required|string',
-            'materials' => 'required|string'
+            'materials' => 'required_without_all:brands|string|nullable',
+            'brands' => 'required_without_all:materials|string|nullable'
         ]);
 
         $name = ucwords($request->input('name'));
-        $category = ucwords($request->input('category'));
-        $mat_ex = [];
-        $materials = explode(", ", $request->input('materials'));
         
-        foreach ($materials as $material) {
-            $pos = strpos($material, '(');
-
-            if ($pos) {
-                $mats = ucwords(substr($material, 0, $pos - 1));
-                $extra = ucwords(substr($material, $pos + 1));
-                $extra = substr($extra, 0, strlen($extra) - 1);
-            }
-            else {
-                $mats = ucwords($material);
-                $extra = '';
-            }
-
-            $mat_ex[$mats] = $extra;
-        }
-
+        // Category validation
+        $category = ucwords($request->input('category'));
         $cat = DB::table('categories')->select('id')->where('name', '=', $category)->get();
-        $mats = [];
-
-        foreach (array_keys($mat_ex) as $material) {
-            $id = DB::table('materials')->select('id')->where('name', '=', $material)->get();
-
-            $mats[$material] = $id[0]->id;
-        }
 
         if (count($cat) == 0) {
             return $this->getProds('No such category "'.$category.'"');
-        } else if (count($mats) != count(array_keys($mat_ex))) {
-            return $this->getProds('No such materials');
+        }
+
+        // Materials validation
+        if ($request->input('materials') !== null) {
+            $mat_ex = [];
+            $materials = explode(", ", $request->input('materials'));
+        
+            foreach ($materials as $material) {
+                $pos = strpos($material, '(');
+
+                if ($pos) {
+                    $mats = ucwords(substr($material, 0, $pos - 1));
+                    $extra = ucwords(substr($material, $pos + 1));
+                    $extra = substr($extra, 0, strlen($extra) - 1);
+                }
+                else {
+                    $mats = ucwords($material);
+                    $extra = '';
+                }
+
+                $mat_ex[$mats] = $extra;
+            }
+
+            $mats = [];
+
+            foreach (array_keys($mat_ex) as $material) {
+                $id = DB::table('materials')->select('id')->where('name', '=', $material)->get();
+
+                $mats[$material] = $id[0]->id;
+            }
+
+            if (count($mats) != count(array_keys($mat_ex))) {
+                return $this->getProds('No such materials');
+            }
+        }
+        
+        // Brands validation
+        if ($request->input('brands') !== null) {
+            $brands_val = [];
+            $brands = explode(", ", $request->input('brands'));
+        
+            foreach ($brands as $brand) {
+                array_push($brands_val, ucwords($brand));
+            }
+
+            $brands_id = [];
+
+            foreach ($brands_val as $brand) {
+                $id = DB::table('brands')->select('id')->where('name', '=', $brand)->get();
+
+                if ($id[0]->id !== null) {
+                    array_push($brands_id, $id[0]->id);
+                }
+                else {
+                    array_push($brands_id, null);
+                }
+            }
         }
 
         DB::beginTransaction();
@@ -125,15 +158,37 @@ class DevController extends Controller
             }
             
             $img = $this->img_parse($name, $ext);
+            $pid = preg_replace('/[^a-zA-Z0-9]/','', base64_encode($category.$name));
 
             $new_prod = DB::table('products')->insertGetId(
-                ['name' => $name, 'categories_id' => $cat[0]->id, 'img' => $img]
+                ['name' => $name, 'categories_id' => $cat[0]->id, 'img' => $img, 'pid' => $pid]
             );
 
             $data_prod_mat = [];
 
-            foreach ($mat_ex as $material => $extra) {
-                array_push($data_prod_mat, ['products_id' => $new_prod, 'materials_id' => $mats[$material], 'extra' => $extra]);
+            if (isset($mat_ex) && isset($brands_id)) {
+                $index = 0;
+
+                foreach ($mat_ex as $material => $extra) {
+                    if ($brands_id !== null) {
+                        array_push($data_prod_mat, ['products_id' => $new_prod, 'materials_id' => $mats[$material], 'extra' => $extra, 'brands_id' => $brands_id[index]]);
+                    }
+                    else {
+                        array_push($data_prod_mat, ['products_id' => $new_prod, 'materials_id' => $mats[$material], 'extra' => $extra]);
+                    }
+
+                    $index++;
+                }
+            }
+            else if (isset($mat_ex)) {
+                foreach ($mat_ex as $material => $extra) {
+                    array_push($data_prod_mat, ['products_id' => $new_prod, 'materials_id' => $mats[$material], 'extra' => $extra]);
+                }
+            }
+            else {
+                foreach ($brands_id as $brand) {
+                    array_push($data_prod_mat, ['products_id' => $new_prod, 'extra' => '', 'brands_id' => $brand]);
+                }
             }
 
             $new_prod_mat = DB::table('prod_mat')->insert(

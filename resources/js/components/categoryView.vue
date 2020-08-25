@@ -47,9 +47,9 @@
         methods: {
             genUrl: function(name) {
                 if (this.itemtype == "Material")
-                    return "product?m=" + name;
+                    return "product?m=" + encodeURIComponent(name);
                 else if (this.itemtype == "Category")
-                    return "product?c=" + name;
+                    return "product?c=" + encodeURIComponent(name);
             },
             genImg: function(name) {
                 return "/storage/images/products/" + name;

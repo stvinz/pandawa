@@ -7,6 +7,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Crypt;
 
 class ProductController extends Controller {
     
@@ -16,9 +17,10 @@ class ProductController extends Controller {
         $searchQ = 'Showing all products';
         $res = DB::table('prod_mat')
             ->join('products', 'prod_mat.products_id', '=', 'products.id')
-            ->join('materials', 'prod_mat.materials_id', '=', 'materials.id')
+            ->leftJoin('materials', 'prod_mat.materials_id', '=', 'materials.id')
+            ->leftJoin('brands', 'prod_mat.brands_id', '=', 'brands.id')
             ->join('categories', 'products.categories_id', '=', 'categories.id')
-            ->select('prod_mat.id as id', 'prod_mat.extra as extra', 'products.img as img', 'products.name as name', 'products.desc as desc', 'materials.name as material', 'categories.name as category');
+            ->select('products.pid as id', 'prod_mat.extra as extra', 'products.img as img', 'products.name as name', 'products.desc as desc', 'materials.name as material', 'categories.name as category', 'brands.name as brand');
 
         if (array_key_exists('s', $query_list)) {
             $s = $request->query('s');
@@ -81,6 +83,16 @@ class ProductController extends Controller {
                     array_push($prods, $row->id);
                 }
 
+                $sel = DB::table('brands')
+                    ->whereRaw('MATCH(brands.name) AGAINST(? IN BOOLEAN MODE)', [$s])
+                    ->join('prod_mat', 'prod_mat.brands_id', '=', 'brands.id')
+                    ->select('prod_mat.products_id as id')
+                    ->get();
+
+                foreach ($sel as $row) {
+                    array_push($prods, $row->id);
+                }
+
                 $res = $res
                     ->whereIn('products.id', $prods)
                     ->orWhereIn('products.id', function($sel) use($s) {
@@ -92,7 +104,7 @@ class ProductController extends Controller {
                         'MATCH(products.name) AGAINST(? IN BOOLEAN MODE) OR
                         MATCH(categories.name) AGAINST(? IN BOOLEAN MODE)', [$s, $s]
                     )
-                    ->addSelect(DB::raw("MATCH(products.name) AGAINST('".$s."') + MATCH(categories.name) AGAINST('".$s."') + MATCH(materials.name) AGAINST('".$s."') + MATCH(prod_mat.extra) AGAINST('".$s."') AS relevance"));
+                    ->addSelect(DB::raw("MATCH(products.name) AGAINST('".$s."') + MATCH(categories.name) AGAINST('".$s."') + MATCH(materials.name) AGAINST('".$s."') + MATCH(prod_mat.extra) AGAINST('".$s."') + MATCH(brands.name) AGAINST('".$s."') AS relevance"));
 
                 
                 $res = $res->orderBy('relevance', 'desc');
@@ -154,14 +166,15 @@ class ProductController extends Controller {
                     'category' => $row->category, 
                     'materials' => [[
                         'name' => $row->material, 
-                        'extra' => $row->extra
+                        'extra' => $row->extra,
+                        'brand' => $row->brand
                     ]]
                 ];
                 
                 $total_items++;
             }
             else {
-                array_push($arranged[$row->name]['materials'], ['name' => $row->material, 'extra' => $row->extra]);
+                array_push($arranged[$row->name]['materials'], ['name' => $row->material, 'extra' => $row->extra, 'brand' => $row->brand]);
             }
         }
 

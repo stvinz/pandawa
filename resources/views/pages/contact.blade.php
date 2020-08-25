@@ -25,7 +25,7 @@
             {{ Form::text('company', null, ['class' => 'form-control input-lg w-100'.($errors->has('company') ? " is-invalid" : "")]) }}
         </div>
         @error('company')
-        @include('components.contact.error')
+        @include('components.error.contact')
         @enderror
         <div class="w-100 py-1"></div>
 
@@ -36,7 +36,7 @@
             {{ Form::text('name', null, ['class' => 'form-control input-lg w-100'.($errors->has('name') ? " is-invalid" : ""), 'required' => 'true']) }}
         </div>
         @error('name')
-        @include('components.contact.error')
+        @include('components.error.contact')
         @enderror
         <div class="w-100 py-1"></div>
 
@@ -47,7 +47,7 @@
             {{ Form::email('email', null, ['class' => 'form-control input-lg w-100'.($errors->has('email') ? " is-invalid" : ""), 'required' => 'true']) }}
         </div>
         @error('email')
-        @include('components.contact.error')
+        @include('components.error.contact')
         @enderror
         <div class="w-100 py-1"></div>
 
@@ -58,7 +58,7 @@
             {{ Form::textArea('enquiry', null, ['class' => 'form-control input-lg w-100'.($errors->has('enquiry') ? " is-invalid" : ""), 'required' => 'true']) }}
         </div>
         @error('enquiry')
-        @include('components.contact.error')
+        @include('components.error.contact')
         @enderror
         <div class="w-100 py-1"></div>
 
@@ -69,7 +69,7 @@
             {{ Form::file('attachment') }}
         </div>
         @error('attachment')
-        @include('components.contact.error')
+        @include('components.error.contact')
         @enderror
         <div class="w-100 py-3"></div>
 

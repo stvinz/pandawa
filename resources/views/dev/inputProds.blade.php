@@ -10,13 +10,24 @@
         {{ Form::text('category', null, ['class' => 'form-control input-lg'.($errors->has('category') ? " is-invalid" : "")]) }}
         {{ Form::label('materials', 'Insert Product Materials') }}:
         {{ Form::text('materials', null, ['placeholder' => 'Besi (NP Putih), Baja (Hitam), ...','class' => 'form-control input-lg'.($errors->has('materials') ? " is-invalid" : "")]) }}
+        {{ Form::label('brands', 'Insert Product Brands') }}:
+        {{ Form::text('brands', null, ['placeholder' => 'Filtec, Recoil, ...','class' => 'form-control input-lg'.($errors->has('materials') ? " is-invalid" : "")]) }}
 
         {{ Form::submit('Add') }}
     {{ Form::close() }}
     @if (isset($err))
         <p class="text-danger">{{ $err }}</p>
     @endif
-    </div>
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+        </div>
     <table class="table table-striped table-hover">
         <tr>
             <th>ID</th>
@@ -25,6 +36,7 @@
             <th>Desc</th>
             <th>Img</th>
             <th>Materials</th>
+            <th>Brand</th>
         </tr>
         @foreach ($items as $item)
             <tr>
@@ -34,6 +46,7 @@
                 <td>{{ $item->desc }}</td>
                 <td><img src="{{ asset('storage/images/products/'.$item->img) }}"></td>
                 <td>{{ $item->material }} ({{ $item->extra }})</td>
+                <td>{{ $item->brand }}</td>
             </tr>
         @endforeach
     </table>
