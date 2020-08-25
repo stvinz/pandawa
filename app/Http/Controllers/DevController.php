@@ -39,6 +39,7 @@ class DevController extends Controller
     private function img_parse($name, $ext){
         $img = trim(strtolower($name));
         $res = '';
+        $prev = '';
 
         for($i = 0; $i < strlen($name); $i++) {
             $char = $img[$i];
@@ -54,12 +55,23 @@ class DevController extends Controller
                         $res .= 'plus';
                         break;
                     case '-':
-                        $res .= 'flat';
+                        if ($prev == '(') {
+                            $res .= 'flat';
+                        }
+                        else {
+                            $res .= '-';
+                        }
                         break;
                     case ' ':
                         $res .= '-';
                         break;
                     case '/':
+                        $res = substr($res, 0, strlen($res) - 1);
+                        
+                        if ((ord($prev) >= ord('a')) and (ord($prev) <= ord('z'))) {
+                            $res .= $prev . '-';
+                        }
+                        break;
                     case '&':
                         $res = substr($res, 0, strlen($res) - 1);
                         break;
@@ -67,6 +79,8 @@ class DevController extends Controller
                         break;
                 }
             }
+
+            $prev = $char;
         }
 
         return $res.$ext;
@@ -157,7 +171,7 @@ class DevController extends Controller
                 $ext = '.png';
             }
             
-            $img = $this->img_parse($name, $ext);
+            $img = $this->img_parse(str_replace('&deg;', '', $name), $ext);
             $pid = preg_replace('/[^a-zA-Z0-9]/','', base64_encode($category.$name));
 
             $new_prod = DB::table('products')->insertGetId(

@@ -159,7 +159,7 @@ class ProductController extends Controller {
         foreach ($res as $row) {
             // Somehow need to encrypt id and decrypt id OR just echo name
             if (!array_key_exists($row->name, $arranged)) {
-                $arranged[$row->name] = [
+                $arranged[str_replace('&deg;', '°', $row->name)] = [
                     'id' => $row->id,
                     'desc' => $row->desc, 
                     'img' => $row->img, 
