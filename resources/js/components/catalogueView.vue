@@ -26,6 +26,7 @@
         visibility: hidden;
         height: 250px;
         width: 250px;
+        overflow: auto;
         transform: translate(0px, 0px);
     }
 
@@ -126,7 +127,7 @@
         },
         methods: {
             genUrl: function(id) {
-                return 'product/' + encodeURIComponent(id);
+                return '/product/' + encodeURIComponent(id);
             },
             genImg: function(name) {
                 return "/storage/images/products/" + name;
@@ -217,6 +218,7 @@
                 var search_params = url.searchParams;
 
                 search_params.set('o', val);
+                search_params.set('p', '');
 
                 url.search = search_params.toString();
                 location.href = url;

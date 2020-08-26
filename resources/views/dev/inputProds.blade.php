@@ -44,7 +44,7 @@
                 <td>{{ $item->name }}</td>
                 <td>{{ $item->category }}</td>
                 <td>{{ $item->desc }}</td>
-                <td><img src="{{ asset('storage/images/products/'.$item->img) }}"></td>
+                <td>{{ $item->img }}</td>
                 <td>{{ $item->material }} ({{ $item->extra }})</td>
                 <td>{{ $item->brand }}</td>
             </tr>

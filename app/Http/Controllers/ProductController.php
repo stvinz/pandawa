@@ -20,7 +20,7 @@ class ProductController extends Controller {
             ->leftJoin('materials', 'prod_mat.materials_id', '=', 'materials.id')
             ->leftJoin('brands', 'prod_mat.brands_id', '=', 'brands.id')
             ->join('categories', 'products.categories_id', '=', 'categories.id')
-            ->select('products.pid as id', 'prod_mat.extra as extra', 'products.img as img', 'products.name as name', 'products.desc as desc', 'materials.name as material', 'categories.name as category', 'brands.name as brand');
+            ->select('products.pid as id', 'prod_mat.extra as extra', 'products.img as img', 'products.name as name', 'materials.name as material', 'brands.name as brand');
 
         if (array_key_exists('s', $query_list)) {
             $s = $request->query('s');
@@ -157,13 +157,10 @@ class ProductController extends Controller {
         $arranged = [];
 
         foreach ($res as $row) {
-            // Somehow need to encrypt id and decrypt id OR just echo name
             if (!array_key_exists($row->name, $arranged)) {
                 $arranged[str_replace('&deg;', '°', $row->name)] = [
                     'id' => $row->id,
-                    'desc' => $row->desc, 
-                    'img' => $row->img, 
-                    'category' => $row->category, 
+                    'img' => $row->img,
                     'materials' => [[
                         'name' => $row->material, 
                         'extra' => $row->extra,
@@ -212,5 +209,46 @@ class ProductController extends Controller {
             ->withItemsPage($lim)
             ->withTotalItems($total_items)
             ->withSortMod($sort_mod);
+    }
+
+    public function getSingleProduct($name) {
+        $res = DB::table('prod_mat')
+            ->join('products', 'prod_mat.products_id', '=', 'products.id')
+            ->leftJoin('materials', 'prod_mat.materials_id', '=', 'materials.id')
+            ->leftJoin('brands', 'prod_mat.brands_id', '=', 'brands.id')
+            ->join('categories', 'products.categories_id', '=', 'categories.id')
+            ->select('prod_mat.extra as extra', 'products.img as img', 'products.name as name', 'products.desc as desc', 'materials.name as material', 'categories.name as category', 'brands.name as brand')
+            ->where('products.pid', '=', $name);
+            
+        $count = $res->count();
+
+        if ($count > 0) {
+            $res = $res->get();
+            $arranged = [];
+
+            foreach ($res as $row) {
+                if (count($arranged) == 0) {
+                    $arranged = [
+                        'name' => str_replace('&deg;', '°', $row->name),
+                        'desc' => $row->desc, 
+                        'img' => $row->img, 
+                        'category' => $row->category, 
+                        'materials' => [[
+                            'name' => $row->material, 
+                            'extra' => $row->extra,
+                            'brand' => $row->brand
+                        ]]
+                    ];
+                }
+                else {
+                    array_push($arranged['materials'], ['name' => $row->material, 'extra' => $row->extra, 'brand' => $row->brand]);
+                }
+            }
+
+            return View::make('pages.product')->withProduct(json_encode($arranged));
+        }
+        else {
+            return abort(404);
+        }
     }
 }

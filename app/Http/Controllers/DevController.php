@@ -66,14 +66,11 @@ class DevController extends Controller
                         $res .= '-';
                         break;
                     case '/':
-                        $res = substr($res, 0, strlen($res) - 1);
-                        
-                        if ((ord($prev) >= ord('a')) and (ord($prev) <= ord('z'))) {
-                            $res .= $prev . '-';
-                        }
-                        break;
                     case '&':
-                        $res = substr($res, 0, strlen($res) - 1);
+                        if ($prev == ' ') {
+                            $res = substr($res, 0, strlen($res) - 1);
+                        }
+
                         break;
                     default:
                         break;
@@ -170,9 +167,15 @@ class DevController extends Controller
             if (($name == 'Split Cotter Pin') or ($name == 'Snap Pin / Single Coil')) {
                 $ext = '.png';
             }
-            
+
+            $rand_1 = rand(0, 99999);
+            $rand_2 = rand(0, 99999);
             $img = $this->img_parse(str_replace('&deg;', '', $name), $ext);
-            $pid = preg_replace('/[^a-zA-Z0-9]/','', base64_encode($category.$name));
+            $pid = preg_replace('/[^a-zA-Z0-9]/','', base64_encode($rand_1.$category.$name.$rand_2));
+            
+            if (strlen($pid) > 20) {
+                $pid = substr($pid, strlen($pid) - 20, 20);
+            }
 
             $new_prod = DB::table('products')->insertGetId(
                 ['name' => $name, 'categories_id' => $cat[0]->id, 'img' => $img, 'pid' => $pid]

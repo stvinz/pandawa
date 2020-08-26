@@ -23,6 +23,7 @@ Vue.component('nav-bar', require('./components/navBar.vue').default);
 Vue.component('title-bar', require('./components/titleBar.vue').default);
 Vue.component('catalogue-view', require('./components/catalogueView.vue').default);
 Vue.component('category-view', require('./components/categoryView.vue').default);
+Vue.component('detail-view', require('./components/detailView.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

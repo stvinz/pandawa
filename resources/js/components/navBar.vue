@@ -118,9 +118,9 @@
             },
             genUrl: function (menu_name, name) {
                 if (menu_name == "Product")
-                    return 'product?c=' + encodeURIComponent(name);
+                    return '/product?c=' + encodeURIComponent(name);
                 else if (menu_name == "Material")
-                    return 'product?m=' + encodeURIComponent(name);
+                    return '/product?m=' + encodeURIComponent(name);
             },
         },
         created() {

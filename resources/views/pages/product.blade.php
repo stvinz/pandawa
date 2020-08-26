@@ -5,8 +5,7 @@
 @section('active-page', 'Product')
 
 @section('content')
-    <p>breadcrumb</p>
-    <p>Name of product</p>
-    <p>Image</p>
-    <p>Info</p>
+    <div>
+        <detail-view itemslist="{{ $product }}"></detail-view>
+    </div>
 @endsection

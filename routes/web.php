@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 /*------------------------
     Dvelepoment features
 --------------------------*/
-if (!app()->environment('production')) {
+if (app()->environment('local')) {
     Route::get('dev/cats', 'DevController@getCats');
     Route::get('dev/mats', 'DevController@getMats');
     Route::get('dev/prods', 'DevController@getProds');
@@ -28,10 +28,9 @@ if (!app()->environment('production')) {
     Dynamic routes
 --------------------*/
 // Parameter routes
-//Route::get('product/details', 'ProductController@get');
+Route::get('product/{name}', 'ProductController@getSingleProduct');
 
 // Query routes
-// Route::get('product/{name}', 'ProductController@getSingleProduct');
 Route::get('product', 'ProductController@getProduct');
 
 /*----------------- 
