@@ -245,7 +245,9 @@ class ProductController extends Controller {
                 }
             }
 
-            return View::make('pages.product')->withProduct(json_encode($arranged));
+            return View::make('pages.product')
+                ->withProduct(json_encode($arranged))
+                ->withProductName($arranged['name']);
         }
         else {
             return abort(404);

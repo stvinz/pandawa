@@ -19,6 +19,15 @@
     .card-top {
         border-bottom: 1px solid lightgray;
     }
+
+    .watermark {
+        position: absolute;
+        height: 250px;
+        width: 250px;
+        overflow: auto;
+        opacity: 0.05;
+        transform: translate(0px, 0px);
+    }
 </style>
 
 <template>
@@ -27,6 +36,7 @@
             <a :href="genUrl(item.name)" class="text-decoration-none">
                 <div class="row justify-content-center align-items-center p-0 card-top">
                     <img :src="genImg(item.img)" :alt="item.img" class="img-responsive">
+                    <img src="/storage/images/logo/watermark.png" alt="watermark.png" class="img-responsive watermark">
                 </div>
                 <div class="row justify-content-center align-items-center pt-3 pb-0">
                     <p class="text-center">{{ item.name }}</p>

@@ -1,6 +1,6 @@
 @extends('layouts.default')
 
-@section('title', 'Name of Product')
+@section('title', $productName)
 
 @section('active-page', 'Product')
 

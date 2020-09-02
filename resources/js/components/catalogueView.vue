@@ -50,6 +50,15 @@
     .query {
         font-weight: bold;
     }
+
+    .watermark {
+        position: absolute;
+        height: 250px;
+        width: 250px;
+        overflow: auto;
+        opacity: 0.05;
+        transform: translate(0px, 0px);
+    }
 </style>
 
 <template>
@@ -72,12 +81,13 @@
                 <div class="row justify-content-center align-items-center p-0 card-top">
                     <img :src="genImg(dets.img)" :alt="dets.img" class="img-responsive">
                     <div class="overlay p-3 m-0">
-                        <p class="text-center m-0 p-3" v-if="isMaterial(dets.materials)">Available Materials: </p>
-                        <p class="text-center m-0 p-3" v-if="!isMaterial(dets.materials)">Available Brands: </p>
+                        <p class="text-center m-0 pt-3" v-if="isMaterial(dets.materials)">Available Materials: </p>
+                        <p class="text-center m-0 pt-3" v-if="!isMaterial(dets.materials)">Available Brands: </p>
                         <p class="text-center m-0 p-1" v-for="detail in dets.materials" :key="detail.name">
                             {{ detail.name !== null ? detail.name : detail.brand }} {{ parantExtra(detail.extra) }} 
                         </p>
                     </div>
+                    <img src="/storage/images/logo/watermark.png" alt="watermark.png" class="img-responsive watermark">
                 </div>
                 <div class="row justify-content-center align-items-center pt-3 pb-0">
                     <p class="text-center">{{ name }}</p>
