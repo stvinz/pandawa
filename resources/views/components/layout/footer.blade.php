@@ -6,8 +6,8 @@
                 <ul class="list-unstyled">
                     <li><a href="/about">About</a></li>
                     <li><a href="/product">Product</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
-                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="" data-toggle="modal" data-target="#pp-modal">Privacy Policy</a></li>
+                    <li><a href="" data-toggle="modal" data-target="#ts-modal">Terms of Service</a></li>
                 </ul>
             </div>
             <div class="col-sm-2 col-12 py-3">
@@ -32,6 +32,6 @@
         </div>
     </div>
     <div class="d-flex bg-dark pt-2 pb-2 px-3 justify-content-end">
-        <small style="color: #D3D3D3;">PT. Sumber Jaya Pandawa &#169 2008</small>
+        <small style="color: #D3D3D3;">PT. Sumber Jaya Pandawa &#169; 2008</small>
     </div>
 </footer>

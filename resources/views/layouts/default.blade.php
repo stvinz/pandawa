@@ -12,7 +12,8 @@
             <div class="container py-5" style="min-height: 85vh;">
                 @yield('content')
             </div>
-            
+
+            @include('components.layout.modal')
             @include('components.layout.footer')
         </div>
         <script src="{{ asset('js/app.js') }}"></script>

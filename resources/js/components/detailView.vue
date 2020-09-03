@@ -5,20 +5,24 @@
 
     .watermark {
         position: absolute;
-        height: 250px;
-        width: 250px;
+        height: 300px;
+        width: 300px;
         overflow: auto;
-        opacity: 0.05;
-        transform: translate(-250px, 0px);
+        opacity: 0.08;
+        transform: translate(-300px, 0px);
     }
 
     .img-item {
-        height: 250px;
-        width: 250px;
+        height: 300px;
+        width: 300px;
     }
 
     .t-head {
         font-weight: bold;
+    }
+
+    ul li {
+        list-style: none;
     }
 </style>
 
@@ -42,15 +46,22 @@
                 <div class="col"><p>{{ this.items.name }}</p></div>
                 <div class="col-12"></div>
                 <div class="col-4 col-md-2 t-head"><p>Category</p></div>
-                <div class="col"><p>{{ this.items.category }}</p></div>
+                <div class="col"><p><a :href="'/product?c=' + encodeURIComponent(this.items.category)">{{ this.items.category }}</a></p></div>
                 <div class="col-12"></div>
                 <div class="col-4 col-md-2 t-head"><p>Description</p></div>
                 <div class="col"><p>{{ this.items.desc != null ? this.items.desc : '-' }}</p></div>
                 <div class="col-12"></div>
                 <div class="col-4 col-md-2 t-head"><p>Available {{isMaterial(this.items.materials) ? "Materials" : "Brands"}}</p></div>
                 <div class="col">
-                    <ul class="pl-3">
-                        <li class="pb-1" v-for="info in this.items.materials" :key="info">{{ info.name !== null ? info.name : info.brands }} {{ info.extra !== '' ? "(" + info.extra + ")" : null }}</li>
+                    <ul class="pl-0">
+                        <li v-for="info in this.items.materials" :key="info">
+                            <p class="mb-2">
+                                <a :href="'/product?s=' + encodeURIComponent(info.name !== null ? info.name : info.brand)">
+                                    {{ info.name !== null ? info.name : info.brand }}
+                                    {{ info.extra !== '' ? "(" + info.extra + ")" : null }}
+                                </a>
+                            </p>
+                        </li>
                     </ul>
                 </div>
                 <div class="col-12"></div>

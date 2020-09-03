@@ -56,7 +56,7 @@
         height: 250px;
         width: 250px;
         overflow: auto;
-        opacity: 0.05;
+        opacity: 0.08;
         transform: translate(0px, 0px);
     }
 </style>
